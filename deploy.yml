@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnetdemo
+  namespace: puma
+  labels:
+    app: dotnetdemo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dotnetdemo
+  strategy: 
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%  
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dotnetdemo
+    spec:
+      containers:
+      - name: dotnetdemo
+        image: acruma1.azurecr.io/dotnet-web 
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
+        livenessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 5000
+          initialDelaySeconds: 5  
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: dotnetdemo
+              key: DB_HOST
+        ports:
+        - containerPort: 5000
+      imagePullSecrets:
+      - name: uma

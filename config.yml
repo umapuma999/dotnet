@@ -1,0 +1,7 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: dotnetdemo
+  namespace: puma
+data:
+  APP_CONFIG: value_from_configmap
