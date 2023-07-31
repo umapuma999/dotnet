@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: azdevdotnet 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azdevdotnet
+  template:
+    metadata:
+      labels:
+        app: azdevdotnet 
+    spec:
+      containers:
+        - name: azdevdotnet 
+          image: azdev12.azurecr.io/azdevdotnet
+          ports:
+          - containerPort: 5000
